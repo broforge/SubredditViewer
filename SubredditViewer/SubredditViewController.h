@@ -10,10 +10,9 @@
 
 @interface SubredditViewController : UIViewController <NSURLConnectionDataDelegate, UIActionSheetDelegate>
 
-@property (strong, nonatomic) NSDictionary *accountInfo;
-
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
+
 - (IBAction)screenTapped:(id)sender;
 
 @end

@@ -8,15 +8,17 @@
 
 #import "SubredditViewController.h"
 #import "WebViewController.h"
+#import "RedditManager.h"
 #import <KiipSDK/KiipSDK.h>
 
 @interface SubredditViewController ()
 
-@property (strong, nonatomic) NSMutableArray *posts;
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
-@property (strong, nonatomic) NSMutableDictionary *selectedPost;
 @property (strong, nonatomic) NSString *subreddit;
+@property (strong, nonatomic) NSMutableArray *posts;
+@property (strong, nonatomic) NSMutableDictionary *selectedPost;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
+
 @property (weak, nonatomic) UITableViewController *tableViewController;
 
 @end
@@ -31,8 +33,6 @@
     [super viewDidLoad];
     self.operationQueue = [[NSOperationQueue alloc] init];
     
-    self.posts = [NSMutableArray array];
-    
     self.dateFormatter = [[NSDateFormatter alloc] init];
     [self.dateFormatter setDateFormat:@"MMM dd, yyyy HH:mm"];
 }
@@ -40,45 +40,21 @@
 - (void)loadSubreddit:(NSString *)subreddit {
     if (![subreddit isEqualToString:self.subreddit]) {
         [self.posts removeAllObjects];
-    }
-    self.subreddit = subreddit;
-    NSString *requestString = [NSString stringWithFormat:@"http://reddit.com/r/%@.json", self.subreddit];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:requestString]];
-    
-    NSError *error;
-    NSURLResponse *response;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    if (data) {
-        [self parseRedditData:data];
-    }
-    else {
-        NSLog(@"error loading subreddit: %@", error.localizedDescription);
-    }
-}
-
-- (void)parseRedditData:(NSData *)data {
-    NSError *error;
-    NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    if (jsonData) {
-        [self.posts removeAllObjects];
-        NSArray *postData = [[jsonData objectForKey:@"data" ]objectForKey:@"children"];
-        for (NSDictionary *post in postData) {
-            NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithDictionary:[post objectForKey:@"data"]];
-            if (entry) {
-                [self.posts addObject:entry];
-            }
-        }
         [self.tableViewController.tableView reloadData];
     }
-    else {
-        NSLog(@"error parsing subreddit posts: %@", error.localizedDescription);
+    self.subreddit = subreddit;
+    
+    RedditManager *reddit = [RedditManager sharedInstance];
+    NSMutableArray *posts = [reddit postsForSubreddit:self.subreddit];
+    if (posts) {
+        self.posts = posts;
+        [self.tableViewController.tableView reloadData];
     }
 }
 
 - (void)starTapped:(id)sender {
     CGPoint senderPosition = [sender convertPoint:CGPointZero toView:self.tableViewController.tableView];
     NSIndexPath *indexPath = [self.tableViewController.tableView indexPathForRowAtPoint:senderPosition];
-    
     self.selectedPost = [self.posts objectAtIndex:indexPath.row];
     
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Vote"
@@ -129,6 +105,19 @@
     
     NSDictionary *post = [self.posts objectAtIndex:indexPath.row];
     
+    UILabel *title = (UILabel *)[cell.contentView viewWithTag:2];
+    title.text = [post objectForKey:@"title"];
+    
+    UILabel *author = (UILabel *)[cell.contentView viewWithTag:3];
+    author.text = [post objectForKey:@"author"];
+    
+    UILabel *date = (UILabel *)[cell.contentView viewWithTag:5];
+    NSDate *postDate = [NSDate dateWithTimeIntervalSince1970:[[post objectForKey:@"created_utc"] doubleValue]];
+    date.text = [self.dateFormatter stringFromDate:postDate];
+    
+    UIButton *button = (UIButton *)[cell.contentView viewWithTag:6];
+    [button addTarget:self action:@selector(starTapped:) forControlEvents:UIControlEventTouchUpInside];
+    
     UIImageView *star = (UIImageView *)[cell.contentView viewWithTag:4];
     NSNumber *likes = [post objectForKey:@"likes"];
     if ((id)likes == [NSNull null]) {
@@ -143,7 +132,7 @@
     
     UIImageView *icon = (UIImageView *)[cell.contentView viewWithTag:1];
     icon.image = nil;
-
+    
     NSString *imageURL = [post objectForKey:@"thumbnail"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:imageURL]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad
@@ -159,19 +148,6 @@
                                                   [icon setNeedsDisplay];
                                               });
                            }];
-    
-    UILabel *title = (UILabel *)[cell.contentView viewWithTag:2];
-    title.text = [post objectForKey:@"title"];
-    
-    UILabel *author = (UILabel *)[cell.contentView viewWithTag:3];
-    author.text = [post objectForKey:@"author"];
-    
-    UILabel *date = (UILabel *)[cell.contentView viewWithTag:5];
-    NSDate *postDate = [NSDate dateWithTimeIntervalSince1970:[[post objectForKey:@"created_utc"] doubleValue]];
-    date.text = [self.dateFormatter stringFromDate:postDate];
-    
-    UIButton *button = (UIButton *)[cell.contentView viewWithTag:6];
-    [button addTarget:self action:@selector(starTapped:) forControlEvents:UIControlEventTouchUpInside];
     
     return cell;
 }
@@ -206,46 +182,29 @@
     if ([title isEqualToString:@"Cancel"]) {
         return;
     }
-    
-    NSString *modhash = [self.accountInfo objectForKey:@"modhash"];
-    NSString *fullname = [self.selectedPost objectForKey:@"name"];
-    
-    NSURL *url = [NSURL URLWithString:@"http://www.reddit.com/api/vote"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request setHTTPMethod:@"POST"];
 
-    NSInteger dir;
-    id likes;
+    NSInteger vote;
+    id likeValue;
     if ([title isEqualToString:@"Up"]) {
-        dir = 1;
-        likes = @(1);
+        vote = 1;
+        likeValue = @(1);
     }
     else if ([title isEqualToString:@"Down"]) {
-        dir = -1;
-        likes = @(0);
+        vote = -1;
+        likeValue = @(0);
     }
     else {
-        dir = 0;
-        likes = [NSNull null];
+        vote = 0;
+        likeValue = [NSNull null];
     }
-
-    NSString *body = [NSString stringWithFormat:@"uh=%@&id=%@&dir=%ld", modhash, fullname, (long)dir];
-    NSData *requestBody = [body dataUsingEncoding:NSUTF8StringEncoding];
-    request.HTTPBody = requestBody;
     
-    NSHTTPURLResponse *response;
-    NSError *error;
-    if ([NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error]) {
-        NSInteger statusCode = response.statusCode;
-        if (statusCode == 200) {
-            if (dir == 1) {
-                [self showKiipMoment];
-            }
-            [self.selectedPost setObject:likes forKey:@"likes"];
-            [self.tableViewController.tableView reloadData];
-        }
-        else {
-            NSLog(@"error posting vote: %@", error.localizedDescription);
+    RedditManager *reddit = [RedditManager sharedInstance];
+    if ([reddit vote:vote forPost:self.selectedPost]) {
+        [self.selectedPost setObject:likeValue forKey:@"likes"];
+        [self.tableViewController.tableView reloadData];
+
+        if (vote == 1) {
+            [self showKiipMoment];
         }
     }
 }

@@ -18,8 +18,7 @@
     return YES;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     [self.webView loadRequest:[NSURLRequest requestWithURL:self.url]];

@@ -17,6 +17,7 @@
 @property (strong, nonatomic) NSMutableDictionary *selectedPost;
 @property (strong, nonatomic) NSString *subreddit;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
+@property (weak, nonatomic) UITableViewController *tableViewController;
 
 @end
 
@@ -37,6 +38,9 @@
 }
 
 - (void)loadSubreddit:(NSString *)subreddit {
+    if (![subreddit isEqualToString:self.subreddit]) {
+        [self.posts removeAllObjects];
+    }
     self.subreddit = subreddit;
     NSString *requestString = [NSString stringWithFormat:@"http://reddit.com/r/%@.json", self.subreddit];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:requestString]];
@@ -64,19 +68,49 @@
                 [self.posts addObject:entry];
             }
         }
-        [self.tableView reloadData];
+        [self.tableViewController.tableView reloadData];
     }
     else {
         NSLog(@"error parsing subreddit posts: %@", error.localizedDescription);
     }
 }
 
+- (void)starTapped:(id)sender {
+    CGPoint senderPosition = [sender convertPoint:CGPointZero toView:self.tableViewController.tableView];
+    NSIndexPath *indexPath = [self.tableViewController.tableView indexPathForRowAtPoint:senderPosition];
+    
+    self.selectedPost = [self.posts objectAtIndex:indexPath.row];
+    
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Vote"
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Cancel"
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:@"Up", @"None", @"Down", nil];
+    [actionSheet showInView:self.view];
+}
+
+- (void)refresh:(id)sender {
+    [self loadSubreddit:self.subreddit];
+    [(UIRefreshControl *)sender endRefreshing];
+}
+
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"ShowWebView"]) {
+    if ([segue.identifier isEqualToString:@"ShowWebView"]) {
         WebViewController *viewController = [segue destinationViewController];
         viewController.url = [NSURL URLWithString:[self.selectedPost objectForKey:@"url"]];
+    }
+    else if ([segue.identifier isEqualToString:@"EmbedTableViewController"]) {
+        self.tableViewController = [segue destinationViewController];
+        
+        __weak id this = self;
+        self.tableViewController.tableView.delegate =  this;
+        self.tableViewController.tableView.dataSource = this;
+        
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        [refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+        self.tableViewController.refreshControl = refreshControl;
     }
 }
 
@@ -135,6 +169,10 @@
     UILabel *date = (UILabel *)[cell.contentView viewWithTag:5];
     NSDate *postDate = [NSDate dateWithTimeIntervalSince1970:[[post objectForKey:@"created_utc"] doubleValue]];
     date.text = [self.dateFormatter stringFromDate:postDate];
+    
+    UIButton *button = (UIButton *)[cell.contentView viewWithTag:6];
+    [button addTarget:self action:@selector(starTapped:) forControlEvents:UIControlEventTouchUpInside];
+    
     return cell;
 }
 
@@ -204,7 +242,7 @@
                 [self showKiipMoment];
             }
             [self.selectedPost setObject:likes forKey:@"likes"];
-            [self.tableView reloadData];
+            [self.tableViewController.tableView reloadData];
         }
         else {
             NSLog(@"error posting vote: %@", error.localizedDescription);
@@ -238,18 +276,6 @@
     self.searchBar.text = self.subreddit;
 }
 
-- (IBAction)starTapped:(id)sender {
-    CGPoint senderPosition = [sender convertPoint:CGPointZero toView:self.tableView];
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:senderPosition];
-    
-    self.selectedPost = [self.posts objectAtIndex:indexPath.row];
 
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Vote"
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Up", @"None", @"Down", nil];
-    [actionSheet showInView:self.view];
-}
 
 @end

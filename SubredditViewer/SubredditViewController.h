@@ -8,14 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SubredditViewController : UIViewController <NSURLConnectionDataDelegate, UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
+@interface SubredditViewController : UIViewController <NSURLConnectionDataDelegate, UIActionSheetDelegate>
 
 @property (strong, nonatomic) NSDictionary *accountInfo;
 
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
 - (IBAction)screenTapped:(id)sender;
-- (IBAction)starTapped:(id)sender;
 
 @end

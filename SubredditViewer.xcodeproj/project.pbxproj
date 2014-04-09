@@ -14,13 +14,14 @@
 		026DF4B018F3AB2100F434AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4AF18F3AB2100F434AA /* main.m */; };
 		026DF4B418F3AB2100F434AA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4B318F3AB2100F434AA /* AppDelegate.m */; };
 		026DF4B718F3AB2100F434AA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 026DF4B518F3AB2100F434AA /* Main.storyboard */; };
-		026DF4BA18F3AB2100F434AA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4B918F3AB2100F434AA /* ViewController.m */; };
+		026DF4BA18F3AB2100F434AA /* SubredditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4B918F3AB2100F434AA /* SubredditViewController.m */; };
 		026DF4BC18F3AB2100F434AA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 026DF4BB18F3AB2100F434AA /* Images.xcassets */; };
 		026DF4C318F3AB2100F434AA /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4C218F3AB2100F434AA /* XCTest.framework */; };
 		026DF4C418F3AB2100F434AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4A318F3AB2100F434AA /* Foundation.framework */; };
 		026DF4C518F3AB2100F434AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4A718F3AB2100F434AA /* UIKit.framework */; };
 		026DF4CD18F3AB2100F434AA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 026DF4CB18F3AB2100F434AA /* InfoPlist.strings */; };
 		026DF4CF18F3AB2100F434AA /* SubredditViewerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4CE18F3AB2100F434AA /* SubredditViewerTests.m */; };
+		026DF4DD18F4FBA900F434AA /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4DC18F4FBA900F434AA /* LoginViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,14 +46,16 @@
 		026DF4B218F3AB2100F434AA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		026DF4B318F3AB2100F434AA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		026DF4B618F3AB2100F434AA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		026DF4B818F3AB2100F434AA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		026DF4B918F3AB2100F434AA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		026DF4B818F3AB2100F434AA /* SubredditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubredditViewController.h; sourceTree = "<group>"; };
+		026DF4B918F3AB2100F434AA /* SubredditViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubredditViewController.m; sourceTree = "<group>"; };
 		026DF4BB18F3AB2100F434AA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		026DF4C118F3AB2100F434AA /* SubredditViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubredditViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		026DF4C218F3AB2100F434AA /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		026DF4CA18F3AB2100F434AA /* SubredditViewerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SubredditViewerTests-Info.plist"; sourceTree = "<group>"; };
 		026DF4CC18F3AB2100F434AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		026DF4CE18F3AB2100F434AA /* SubredditViewerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubredditViewerTests.m; sourceTree = "<group>"; };
+		026DF4DB18F4FBA900F434AA /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		026DF4DC18F4FBA900F434AA /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,8 +118,10 @@
 				026DF4B218F3AB2100F434AA /* AppDelegate.h */,
 				026DF4B318F3AB2100F434AA /* AppDelegate.m */,
 				026DF4B518F3AB2100F434AA /* Main.storyboard */,
-				026DF4B818F3AB2100F434AA /* ViewController.h */,
-				026DF4B918F3AB2100F434AA /* ViewController.m */,
+				026DF4DB18F4FBA900F434AA /* LoginViewController.h */,
+				026DF4DC18F4FBA900F434AA /* LoginViewController.m */,
+				026DF4B818F3AB2100F434AA /* SubredditViewController.h */,
+				026DF4B918F3AB2100F434AA /* SubredditViewController.m */,
 				026DF4BB18F3AB2100F434AA /* Images.xcassets */,
 				026DF4AA18F3AB2100F434AA /* Supporting Files */,
 			);
@@ -249,7 +254,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				026DF4BA18F3AB2100F434AA /* ViewController.m in Sources */,
+				026DF4DD18F4FBA900F434AA /* LoginViewController.m in Sources */,
+				026DF4BA18F3AB2100F434AA /* SubredditViewController.m in Sources */,
 				026DF4B418F3AB2100F434AA /* AppDelegate.m in Sources */,
 				026DF4B018F3AB2100F434AA /* main.m in Sources */,
 			);

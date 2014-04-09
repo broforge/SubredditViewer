@@ -65,7 +65,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-420" y="-101"/>
+            <point key="canvasLocation" x="-449" y="-101"/>
         </scene>
         <!--Subreddit View Controller-->
         <scene sceneID="ufC-wZ-h7g">
@@ -157,6 +157,7 @@
                         <outlet property="searchBar" destination="DVO-78-hec" id="f2U-jF-dso"/>
                         <outlet property="tableView" destination="aNb-Dk-ixw" id="pmU-Cx-ibg"/>
                         <outlet property="tapGesture" destination="yir-KT-UhI" id="G2T-L9-ttd"/>
+                        <segue destination="wQr-XE-iJe" kind="modal" identifier="ShowWebView" id="Ibw-e1-qPL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -166,7 +167,47 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="26" y="-101"/>
+            <point key="canvasLocation" x="-61" y="-101"/>
+        </scene>
+        <!--Web View Controller-->
+        <scene sceneID="GcN-3J-xGq">
+            <objects>
+                <viewController id="wQr-XE-iJe" customClass="WebViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="j35-t1-YoV"/>
+                        <viewControllerLayoutGuide type="bottom" id="Eju-Sg-zfj"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="vFy-VT-yuE">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" fixedFrame="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9GK-fP-wcq">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="top" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ggh-9V-Uf7">
+                                <rect key="frame" x="266" y="5" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="x">
+                                    <color key="titleColor" red="1" green="0.07060657998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="dismissButtonPressed:" destination="wQr-XE-iJe" eventType="touchUpInside" id="HO1-6k-YaM"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="webView" destination="9GK-fP-wcq" id="aM1-mK-tm8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6Ca-kj-LVC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="355" y="-101"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

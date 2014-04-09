@@ -29,6 +29,7 @@
 		026DF4EA18F50C6900F434AA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4E918F50C6900F434AA /* SystemConfiguration.framework */; };
 		026DF4EC18F50C7200F434AA /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4EB18F50C7200F434AA /* AdSupport.framework */; };
 		026DF4EE18F50C7800F434AA /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 026DF4ED18F50C7800F434AA /* PassKit.framework */; };
+		026DF4F218F5166E00F434AA /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 026DF4F118F5166E00F434AA /* WebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,8 @@
 		026DF4E918F50C6900F434AA /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		026DF4EB18F50C7200F434AA /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		026DF4ED18F50C7800F434AA /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
+		026DF4F018F5166E00F434AA /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		026DF4F118F5166E00F434AA /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +147,8 @@
 				026DF4B218F3AB2100F434AA /* AppDelegate.h */,
 				026DF4B318F3AB2100F434AA /* AppDelegate.m */,
 				026DF4B518F3AB2100F434AA /* Main.storyboard */,
+				026DF4F018F5166E00F434AA /* WebViewController.h */,
+				026DF4F118F5166E00F434AA /* WebViewController.m */,
 				026DF4DB18F4FBA900F434AA /* LoginViewController.h */,
 				026DF4DC18F4FBA900F434AA /* LoginViewController.m */,
 				026DF4B818F3AB2100F434AA /* SubredditViewController.h */,
@@ -283,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				026DF4DD18F4FBA900F434AA /* LoginViewController.m in Sources */,
+				026DF4F218F5166E00F434AA /* WebViewController.m in Sources */,
 				026DF4BA18F3AB2100F434AA /* SubredditViewController.m in Sources */,
 				026DF4B418F3AB2100F434AA /* AppDelegate.m in Sources */,
 				026DF4B018F3AB2100F434AA /* main.m in Sources */,

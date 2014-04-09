@@ -7,6 +7,7 @@
 //
 
 #import "SubredditViewController.h"
+#import "WebViewController.h"
 #import <KiipSDK/KiipSDK.h>
 
 @interface SubredditViewController ()
@@ -67,6 +68,15 @@
     }
     else {
         NSLog(@"error parsing subreddit posts: %@", error.localizedDescription);
+    }
+}
+
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"ShowWebView"]) {
+        WebViewController *viewController = [segue destinationViewController];
+        viewController.url = [NSURL URLWithString:[self.selectedPost objectForKey:@"url"]];
     }
 }
 
@@ -131,9 +141,8 @@
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary *post = [self.posts objectAtIndex:indexPath.row];
-    NSURL *url = [NSURL URLWithString:[post objectForKey:@"url"]];
-    [[UIApplication sharedApplication] openURL:url];
+    self.selectedPost = [self.posts objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"ShowWebView" sender:nil];
 }
 
 #pragma mark - UISearchBarDelegate
@@ -182,7 +191,7 @@
         likes = [NSNull null];
     }
 
-    NSString *body = [NSString stringWithFormat:@"uh=%@&id=%@&dir=%d", modhash, fullname, dir];
+    NSString *body = [NSString stringWithFormat:@"uh=%@&id=%@&dir=%ld", modhash, fullname, (long)dir];
     NSData *requestBody = [body dataUsingEncoding:NSUTF8StringEncoding];
     request.HTTPBody = requestBody;
     

@@ -56,6 +56,8 @@
     return NO;
 }
 
+#pragma mark - Segue
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"ShowSubredditView"]) {
         SubredditViewController *viewController = [segue destinationViewController];

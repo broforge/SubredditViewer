@@ -30,10 +30,11 @@
     NSHTTPURLResponse *response = NULL;
     NSError *error = NULL;
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    if (data) {
-        NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-        self.accountInfo = [[jsonData objectForKey:@"json"] objectForKey:@"data"];
+    NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    NSDictionary *accountData = [[jsonData objectForKey:@"json"] objectForKey:@"data"];
+
+    if (accountData) {
+        self.accountInfo = accountData;
         return YES;
     }
     

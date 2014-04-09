@@ -7,6 +7,7 @@
 //
 
 #import "SubredditViewController.h"
+#import <KiipSDK/KiipSDK.h>
 
 @interface SubredditViewController ()
 
@@ -14,6 +15,7 @@
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
 @property (strong, nonatomic) NSMutableDictionary *selectedPost;
 @property (strong, nonatomic) NSString *subreddit;
+@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 
 @end
 
@@ -28,6 +30,9 @@
     self.operationQueue = [[NSOperationQueue alloc] init];
     
     self.posts = [NSMutableArray array];
+    
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    [self.dateFormatter setDateFormat:@"MMM dd, yyyy HH:mm"];
 }
 
 - (void)loadSubreddit:(NSString *)subreddit {
@@ -42,7 +47,7 @@
         [self parseRedditData:data];
     }
     else {
-        NSLog(@"connection error: %@", [error localizedDescription]);
+        NSLog(@"error loading subreddit: %@", error.localizedDescription);
     }
 }
 
@@ -61,7 +66,7 @@
         [self.tableView reloadData];
     }
     else {
-        NSLog(@"error parsing json: %@", [error localizedDescription]);
+        NSLog(@"error parsing subreddit posts: %@", error.localizedDescription);
     }
 }
 
@@ -99,12 +104,13 @@
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:imageURL]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                               timeoutInterval:60];
+    
     [NSURLConnection sendAsynchronousRequest:imageRequest
                                        queue:self.operationQueue
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               UIImage *image = [UIImage imageWithData:data];
                                dispatch_async(dispatch_get_main_queue(),
                                               ^{
-                                                  UIImage *image = [UIImage imageWithData:data];
                                                   icon.image = image;
                                                   [icon setNeedsDisplay];
                                               });
@@ -116,6 +122,9 @@
     UILabel *author = (UILabel *)[cell.contentView viewWithTag:3];
     author.text = [post objectForKey:@"author"];
     
+    UILabel *date = (UILabel *)[cell.contentView viewWithTag:5];
+    NSDate *postDate = [NSDate dateWithTimeIntervalSince1970:[[post objectForKey:@"created_utc"] doubleValue]];
+    date.text = [self.dateFormatter stringFromDate:postDate];
     return cell;
 }
 
@@ -160,36 +169,56 @@
 
     NSInteger dir;
     id likes;
-    
     if ([title isEqualToString:@"Up"]) {
         dir = 1;
         likes = @(1);
-    }
-    else if ([title isEqualToString:@"None"]) {
-        dir = 0;
-        likes = [NSNull null];
     }
     else if ([title isEqualToString:@"Down"]) {
         dir = -1;
         likes = @(0);
     }
+    else {
+        dir = 0;
+        likes = [NSNull null];
+    }
 
     NSString *body = [NSString stringWithFormat:@"uh=%@&id=%@&dir=%d", modhash, fullname, dir];
     NSData *requestBody = [body dataUsingEncoding:NSUTF8StringEncoding];
-    [request setHTTPBody:requestBody];
+    request.HTTPBody = requestBody;
     
     NSHTTPURLResponse *response;
     NSError *error;
     if ([NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error]) {
         NSInteger statusCode = response.statusCode;
         if (statusCode == 200) {
+            if (dir == 1) {
+                [self showKiipMoment];
+            }
             [self.selectedPost setObject:likes forKey:@"likes"];
             [self.tableView reloadData];
         }
         else {
-            NSLog(@"error posting vote: %@", [error localizedDescription]);
+            NSLog(@"error posting vote: %@", error.localizedDescription);
         }
     }
+}
+
+#pragma mark - Kiip
+
+- (void)showKiipMoment {
+    [[Kiip sharedInstance] saveMoment:@"UpVoted" withCompletionHandler:^(KPPoptart* popTart, NSError* error)
+     {
+         if (error) {
+             NSLog(@"error showing kiip moment: %@", error.localizedDescription);
+         }
+         else if (popTart) {
+             [popTart show];
+         }
+         else if (!popTart) {
+             NSLog(@"error showing kiip moment: no rewards available");
+         }
+     }];
+
 }
 
 #pragma mark - IBAction
@@ -210,7 +239,8 @@
                                                              delegate:self
                                                     cancelButtonTitle:@"Cancel"
                                                destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Up",@"None",@"Down", nil];
+                                                    otherButtonTitles:@"Up", @"None", @"Down", nil];
     [actionSheet showInView:self.view];
 }
+
 @end

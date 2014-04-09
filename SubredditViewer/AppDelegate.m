@@ -12,6 +12,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    Kiip *kiip = [[Kiip alloc] initWithAppKey:@"86ecf06dc7f55ecc6e28036fe601c1e3" andSecret:@"51b7721ea0e8b0496d4a371b064ea542"];
+    kiip.delegate = self;
+    [Kiip setSharedInstance:kiip];
+    
     // Override point for customization after application launch.
     return YES;
 }
